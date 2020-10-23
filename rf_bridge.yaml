@@ -54,6 +54,14 @@ binary_sensor:
     device_class: door
     id: bin_sivuovi
   - platform: template
+    name: "Etuterassin ovi"
+    device_class: door
+    id: bin_etuterdeovi
+  - platform: template
+    name: "Takaterassin ovi"
+    device_class: door
+    id: bin_takaterdeovi
+  - platform: template
     name: "Etuterassi"
     device_class: motion
     id: bin_etuterassi
@@ -101,6 +109,22 @@ rf_bridge:
               
             case 0x34210E:
               id(bin_sivuovi).publish_state(false);
+              break;
+              
+            case 0x344A0A:
+              id(bin_etuterdeovi).publish_state(true);
+              break;
+              
+            case 0x344A0E:
+              id(bin_etuterdeovi).publish_state(false);
+              break;
+              
+            case 0x32170A:
+              id(bin_takaterdeovi).publish_state(true);
+              break;
+              
+            case 0x32170E:
+              id(bin_takaterdeovi).publish_state(false);
               break;
               
             case 0xee88ae:

@@ -32,27 +32,85 @@ sensor:
     cf_pin: GPIO5
     cf1_pin: GPIO14
     current:
-      name: ${friendly_name} Current
+      name: Current
+      id: curr
+      internal: true
     power:
-      name: ${friendly_name} Power
+      name: Power
       id: power
+      internal: true
       filters:
         # Some calibration
         - multiply: 0.4545
     voltage:
-      name: ${friendly_name} Voltage
+      name: Voltage
+      id: volt
+      internal: true
     current_resistor: 0.001  # default 0.001
     voltage_divider: 910     # default 2351
     change_mode_every: 8     # default 8
-    update_interval: 60s      # default 60s
+    update_interval: 2s      # default 60s
 
   # Sum power readings over the day
   - platform: total_daily_energy
-    name: ${friendly_name} Total Daily Energy
+    id: daily_energy
+    internal: true
     power_id: power
     filters:
       - multiply: 0.001   # convert Wh to kWh
     unit_of_measurement: kWh
+    
+################################################################################
+#                         Slow sensors for Home assistant                      #
+################################################################################
+
+  - platform: template #########################
+    name: ${friendly_name} Current
+    lambda: |-
+      if (id(curr).state) {
+        return (id(curr).state);
+      } else {
+        return 0;
+      }
+    unit_of_measurement: A
+    icon: "mdi:alpha-a-circle"
+    update_interval: 60s
+  
+  - platform: template #########################
+    name: ${friendly_name} Voltage
+    lambda: |-
+      if (id(volt).state) {
+        return (id(volt).state);
+      } else {
+        return 0;
+      }
+    unit_of_measurement: V
+    icon: "mdi:alpha-v-circle"
+    update_interval: 60s
+  
+  - platform: template #########################
+    name: ${friendly_name} Power
+    lambda: |-
+      if (id(power).state) {
+        return (id(power).state);
+      } else {
+        return 0;
+      }
+    unit_of_measurement: W 
+    icon: "mdi:alpha-w-circle"
+    update_interval: 60s    
+    
+  - platform: template #########################
+    name: ${friendly_name} Total Daily Energy
+    lambda: |-
+      if (id(daily_energy).state) {
+        return (id(daily_energy).state);
+      } else {
+        return 0;
+      }
+    unit_of_measurement: kWh 
+    icon: "mdi:flash"
+    update_interval: 60s    
 
 # Enable getting local time for total daily energy calculation
 time:
@@ -76,7 +134,7 @@ binary_sensor:
 # tilakoneen tilat    #
 #######################
   - platform: template
-    name: "ON"
+    name: ${friendly_name} päällä
     id: coffee_machine_on
     filters:
         - delayed_off: 1s
@@ -111,14 +169,16 @@ binary_sensor:
             }
 
   - platform: template
-    name: "BREWING"
+    name: ${friendly_name} keittää
     id: coffee_machine_brewing
+    filters:
+      delayed_off: 30s
     lambda: |-
       if (isnan(id(power).state)) 
       {
         return {};
       } 
-      else if (id(power).state > 500) 
+      else if (id(power).state >= 200) 
       {
         return true;
       }
@@ -127,23 +187,28 @@ binary_sensor:
         return false;
       }
   - platform: template
-    name: "KEEPING WARM"
+    name: ${friendly_name} pitää lämpimänä
     id: coffee_machine_keeping_warm
     lambda: |-  
       if (isnan(id(power).state)) 
       {
         return {};
       } 
-      else if ( (id(power).state > 5)&&(id(power).state < 500) )
+      else if ( (id(power).state > 5)&&(id(power).state < 200) )
       {
         return true;
       }
       else
       {
         return false;
-      }    
+      }
+    on_press:
+      then:
+        - delay: '01:00'
+        - switch.turn_off: relay
+        
   - platform: template
-    name: "OFF"
+    name: ${friendly_name} pois päältä
     id: coffee_machine_off
 
 
@@ -163,3 +228,5 @@ switch:
     - switch.turn_on: blue_led
     on_turn_off:
     - switch.turn_off: blue_led
+    
+    

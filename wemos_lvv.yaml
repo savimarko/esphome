@@ -1,0 +1,23 @@
+esphome:
+  name: wemos_lvv
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret iot_ssid
+  password: !secret iot_ssid_passwd
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Wemos Lvv Fallback Hotspot"
+    password: "67IBKzeodCIM"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:

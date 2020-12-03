@@ -1,0 +1,64 @@
+esphome:
+  name: doit_esp32_1
+  platform: ESP32
+  board: esp32doit-devkit-v1
+
+wifi:
+  ssid: !secret iot_ssid
+  password: !secret iot_ssid_passwd
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Doit Esp32 1 Fallback Hotspot"
+    password: "fqgJ0sFJn9Xp"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+# enable ble tracker
+esp32_ble_tracker:
+
+sensor:
+  - platform: xiaomi_lywsd03mmc
+    mac_address: "A4:C1:38:0E:CE:03"
+    bindkey: "2a933fdf74f288ed2ad437b2db62af91"
+    temperature:
+      name: "makuuhuone 3 temperature"
+    humidity:
+      name: "makuuhuone 3 humidity"
+    battery_level:
+      name: "makuuhuone 3 th battery level"
+  - platform: xiaomi_lywsd03mmc
+    mac_address: "A4:C1:38:E9:3F:17"
+    bindkey: "2a933fdf74f288ed2ad437b2db62af91"
+    temperature:
+      name: "eteinen temperature"
+    humidity:
+      name: "eteinen humidity"
+    battery_level:
+      name: "eteinen th battery level"      
+  - platform: xiaomi_lywsd03mmc
+    mac_address: "A4:C1:38:2B:5B:26"
+    bindkey: "2a933fdf74f288ed2ad437b2db62af91"
+    temperature:
+      name: "kodinhoitohuone temperature"
+    humidity:
+      name: "kodinhoitohuone humidity"
+    battery_level:
+      name: "kodinhoitohuone th battery level"            
+  - platform: xiaomi_lywsd03mmc
+    mac_address: "A4:C1:38:AD:4B:8C"
+    bindkey: "2a933fdf74f288ed2ad437b2db62af91"
+    temperature:
+      name: "olohuone temperature"
+    humidity:
+      name: "olohuone humidity"
+    battery_level:
+      name: "olohuone th battery level"                  

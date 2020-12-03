@@ -21,3 +21,24 @@ logger:
 api:
 
 ota:
+
+# virranmittaus
+sensor:
+  - platform: ct_clamp
+    sensor: adc_sensor
+    name: "Measured Current"
+    update_interval: 60s
+  - platform: dallas
+    address: 0x27051686AF9CFF28
+    name: "lvp1"  
+
+  # Example source sensor
+  - platform: adc
+    pin: A0
+    id: adc_sensor
+    
+dallas:
+  - pin: D2
+  
+
+  
